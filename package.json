@@ -1,0 +1,19 @@
+{
+  "name": "userscripts",
+  "version": "1.0.0",
+  "description": "Userscripts resposeitory for may `TamperMoney` or Chrome Extensions",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShawJie/userscripts.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ShawJie/userscripts/issues"
+  },
+  "homepage": "https://github.com/ShawJie/userscripts#readme"
+}
