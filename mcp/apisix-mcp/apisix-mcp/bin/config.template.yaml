@@ -1,0 +1,2 @@
+apisix:
+  node_listen: 8000

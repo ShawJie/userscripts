@@ -1,0 +1,16 @@
+{
+  "name": "history-price-search",
+  "version": "1.0.0",
+  "description": "Try get eshop history price about goods price",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rm -rf ./dist/*",
+    "build": "npx tsc && node dist/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}

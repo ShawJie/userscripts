@@ -1,0 +1,44 @@
+#!/bin/bash
+
+set -e;
+
+system_info=$(uname -m);
+if [ $system_info = 'aarch64' ];then
+    system_info='arm64';
+elif [ $system_info = 'x86_64' ]; then
+    system_info='amd64';
+fi
+
+function installEtcd(){
+    specify_etcd_version=$1;
+    if [ -z "$specify_etcd_version" ]; then
+        specify_etcd_version=$(curl -s --location 'https://api.github.com/repos/etcd-io/etcd/releases/latest' | jq '.tag_name' -r);
+        printf "Not specify etcd version, load version to latest -> $specify_etcd_version\n";
+    fi
+
+    wget https://github.com/etcd-io/etcd/releases/download/${specify_etcd_version}/etcd-${specify_etcd_version}-linux-${system_info}.tar.gz;
+    tar -xvf etcd-${specify_etcd_version}-linux-${system_info}.tar.gz && \
+      cd etcd-${specify_etcd_version}-linux-${system_info} && \
+      sudo cp -a etcd etcdctl /usr/bin/
+}
+
+function installApisix(){
+    repo_path='http://repos.apiseven.com/packages/debian';
+    if [ $system_info = 'arm64' ]; then
+        repo_path='http://repos.apiseven.com/packages/arm64/debian';
+    fi
+    
+    wget -O - http://repos.apiseven.com/pubkey.gpg | sudo apt-key add -
+    echo "deb ${repo_path} bullseye main" | sudo tee /etc/apt/sources.list.d/apisix.list;
+
+    sudo apt update;
+    sudo apt install -y apisix=3.8.0-0; 
+}
+
+# install apisix first
+installApisix;
+
+# then install etcd
+installEtcd;
+
+printf "config apisix finished\n";
