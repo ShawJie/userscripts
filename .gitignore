@@ -1,0 +1,22 @@
+# Git忽略规则文件
+# 本文件定义了Git版本控制中需要忽略的文件和目录
+# 主要用于Node.js项目
+
+# Node.js
+node_modules/
+dist/
+build/
+.DS_Store
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.idea/
+.vscode/
+*.log
+*.swp
+*.swo
