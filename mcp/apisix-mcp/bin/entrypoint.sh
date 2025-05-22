@@ -29,7 +29,7 @@ function initialAdminKey(){
     viewKey=$(echo $RANDOM | md5sum | head -c 16);
 
     export CUSTOM_API_WRITE_KEY=$writeKey;
-    export CUSTOM_API_WRITE_KEY=$viewKey;
+    export CUSTOM_API_VIEW_KEY=$viewKey;
 
     printf "CustomWriteKey: $writeKey\nCustomViewKey: $viewKey\n";
 }
