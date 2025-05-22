@@ -31,7 +31,7 @@ function initialAdminKey(){
     export CUSTOM_API_WRITE_KEY=$writeKey;
     export CUSTOM_API_WRITE_KEY=$viewKey;
 
-    printf "CustomWriteKey: $writeKey\nCustomViewKey: $viewKey";
+    printf "CustomWriteKey: $writeKey\nCustomViewKey: $viewKey\n";
 }
 
 function main(){
