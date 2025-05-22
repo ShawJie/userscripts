@@ -3,10 +3,12 @@
 set -e;
 
 function launchEtcd(){
-    nohup etcd > /dev/stdout 2>&1 &
+    nohup etcd > /tmp/etcd.log 2>&1 &
 }
 
 function launchApisix(){
+    apisix_path=$(whereis apisix | awk '{print $NF}');
+
     custom_config=${1};
     if [ ! -e "$custom_config" ]; then
         apisix init;
@@ -14,7 +16,7 @@ function launchApisix(){
 
         sleep 3;
         printf "Luanch as default apisix init config...\n";
-        config_context=$(whereis apisix | awk '{print $NF}' | xargs -I{} cat "{}/conf/config.yaml");
+        config_context=$(cat "${apisix_path}/conf/config.yaml");
         if [ -n "$config_context" ]; then
             printf "Following config: \n${config_context}\n\n";
         fi
