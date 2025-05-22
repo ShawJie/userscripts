@@ -9,6 +9,14 @@ elif [ $system_info = 'x86_64' ]; then
     system_info='amd64';
 fi
 
+function installEnvironmentDependency(){
+    apt-get update;
+    for dep in sudo curl wget git jq tar make gnupg2; do
+        printf "Gonna install dependency: $dep";
+        apt-get install -y $dep;
+    done
+}
+
 function installEtcd(){
     specify_etcd_version=$1;
     if [ -z "$specify_etcd_version" ]; then
@@ -23,6 +31,11 @@ function installEtcd(){
 }
 
 function installApisix(){
+    except_version=${1};
+    if [ -z $except_version ]; then
+        except_version="3.12.0-0";
+    fi
+
     repo_path='http://repos.apiseven.com/packages/debian';
     if [ $system_info = 'arm64' ]; then
         repo_path='http://repos.apiseven.com/packages/arm64/debian';
@@ -32,13 +45,19 @@ function installApisix(){
     echo "deb ${repo_path} bullseye main" | sudo tee /etc/apt/sources.list.d/apisix.list;
 
     sudo apt update;
-    sudo apt install -y apisix=3.8.0-0; 
+    sudo apt install -y apisix=${except_version}; 
 }
 
-# install apisix first
-installApisix;
+function main() {
+    installEnvironmentDependency
 
-# then install etcd
-installEtcd;
+    # install apisix first
+    installApisix ${1};
 
-printf "config apisix finished\n";
+    # then install etcd
+    installEtcd;
+
+    printf "config apisix finished\n";
+}
+
+main "$@";

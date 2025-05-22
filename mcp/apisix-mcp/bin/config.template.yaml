@@ -1,0 +1,22 @@
+apisix:
+  node_listen:
+    - port: 9080
+deployment:
+  role: traditional
+  role_traditional:
+    config_provider: etcd
+  admin:
+    admin_listen:
+      port: 9180
+    admin_key_required: true
+    allow_admin:
+      - 127.0.0.0/24
+    admin_key:
+      -
+        name: admin
+        key: ${{CUSTOM_API_WRITE_KEY}}
+        role: admin
+      -
+        name: viewer
+        key: ${{CUSTOM_API_VIEW_KEY}}
+        role: viewer
