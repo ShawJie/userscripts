@@ -6,7 +6,7 @@ COPY bin/apisix_conf.sh /data/bin/apisix_conf.sh
 
 RUN bin/apisix_conf.sh
 
-COPY bin/config.template.yaml /data/config.template.yaml
+COPY --from=apache/apisix-dashboard:latest /usr/local/apisix-dashboard /data/apisix-dashboard
 COPY bin/entrypoint.sh /data/entrypoint.sh
 
 ENTRYPOINT ["./entrypoint.sh"]

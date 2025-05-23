@@ -1,0 +1,7 @@
+apisix:
+  node_listen:
+    - port: 9080
+deployment:
+  role: traditional
+  role_traditional:
+    config_provider: etcd

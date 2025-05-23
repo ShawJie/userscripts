@@ -56,7 +56,7 @@ function main() {
 
     # then install etcd
     installEtcd;
-
+    
     printf "config apisix finished\n";
 }
 

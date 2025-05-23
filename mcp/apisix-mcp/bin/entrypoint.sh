@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e;
+set -ex;
 
 function launchEtcd(){
     nohup etcd > /tmp/etcd.log 2>&1 &
@@ -8,22 +8,25 @@ function launchEtcd(){
 
 function launchApisix(){
     apisix_path=$(whereis apisix | awk '{print $NF}');
-
-    custom_config=${1};
-    if [ ! -e "$custom_config" ]; then
-        apisix init;
-        apisix start;
-
-        sleep 3;
-        printf "Luanch as default apisix init config...\n";
-        config_context=$(cat "${apisix_path}/conf/config.yaml");
-        if [ -n "$config_context" ]; then
-            printf "Following config: \n${config_context}\n\n";
-        fi
-    else
-        printf "Luanch as custom config: ${custom_config}\n";
-        apisix start -c "${custom_config}";
+    
+    baseconfig_exists="false";
+    list_confs=$(find "${apisix_path}/conf" -name "*.yaml");
+    if [ -n "$list_confs"]; then
+        printf "Folling config file will be apply: \n";
+        for conf in $list_confs; do
+            printf "  - $conf\n";
+            if [ $conf == "config.yaml" ]; then
+                baseconfig_exists="true";
+            fi
+        done
     fi
+
+    if [ ! $baseconfig_exists ]; then
+        apisix init;
+        printf "Missing base config file, luanch as default apisix init config...\n";
+    fi
+
+    apisix start;
 }
 
 function initialAdminKey(){
@@ -36,13 +39,37 @@ function initialAdminKey(){
     printf "CustomWriteKey: $writeKey\nCustomViewKey: $viewKey\n";
 }
 
+function launchDashboard(){
+    cd /data/apisix-dashboard;
+
+    chmod +x ./manager-api;
+    exec ./manager-api;
+}
+
 function main(){
+    mode="traditional";
+
+    while getopts "m:" opt_name; do
+        case $opt_name in
+            m) 
+                mode=$OPTARG
+                echo "Switch mode to '$OPTARG'";
+                ;;
+        esac
+    done
+
     initialAdminKey
+    if [ "$mode" == "standalone" ]; then
 
-    launchEtcd;
-    launchApisix ${1};
+        launchApisix;
 
-    tail -f /dev/null;
+        ln -sf /dev/stdout /usr/local/apisix/logs/access.log && \
+        ln -sf /dev/stderr /usr/local/apisix/logs/error.log;
+        while true; do sleep 600; done;
+    else
+        launchEtcd;
+        launchDashboard;
+    fi
 }
 
 main "$@";
