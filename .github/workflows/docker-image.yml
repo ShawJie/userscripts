@@ -11,5 +11,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Build the Docker image
+    - name: Build Apisix Image
       run: docker build . --file ./mcp/apisix-mcp/Dockerfile --tag shaw/apisix:$(date +%s)
