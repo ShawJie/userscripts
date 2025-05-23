@@ -1,15 +1,13 @@
 name: Docker Image CI
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+on: workflow_dispatch
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    - name: Enter to target sub dir
+      run: cd mcp/apisix-mcp
     - name: Build Apisix Image
-      run: docker build . --file ./mcp/apisix-mcp/Dockerfile --tag shaw/apisix:$(date +%s)
+      run: docker build --tag shaw/apisix:$(date +%s) .
