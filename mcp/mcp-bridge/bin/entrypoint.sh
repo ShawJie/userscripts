@@ -10,10 +10,13 @@ function fetchServers(){
     fileNames=$(find $mcp_server_dir -name "*.json");
     mcp_servers=$(echo '{}' | jq '.mcp_servers = {}');
     for server in $fileNames; do
-        root_key=$(cat $server | jq 'keys[0]');
-        structure=$(jq ".${root_key}" $server);
+        keys_cnt=$(cat $server | jq 'keys | length');
+        for ((i=0;i<$keys_cnt;i++)); do
+            root_key=$(cat $server | jq "keys[${i}]");
+            structure=$(jq ".${root_key}" $server);
 
-        mcp_servers=$(echo $mcp_servers | jq ".mcp_servers.${root_key} = ${structure}");
+            mcp_servers=$(echo $mcp_servers | jq ".mcp_servers.${root_key} = ${structure}");
+        done
     done;
     echo $mcp_servers;
 }
