@@ -1,17 +1,17 @@
 #!/bin/bash
 
-set -e;
+set -ex;
 
 work_dir="/data/bridge"
-mcp_server_dir='/data/servers';
-base_config='/data/bin/base_config.json';
+mcp_server_dir='/Users/shawjie/Documents/Workspace/Projects/Other/userscripts/mcp/mcp-bridge/servers';
+base_config='/Users/shawjie/Documents/Workspace/Projects/Other/userscripts/mcp/mcp-bridge/bin/base_config.json';
 
 function fetchServers(){
     fileNames=$(find $mcp_server_dir -name "*.json");
     mcp_servers=$(echo '{}' | jq '.mcp_servers = {}');
     for server in $fileNames; do
-        keys_cnt=$(cat $server | jq 'keys | length');
-        for i in $(seq $keys_cnt); do
+        keys_cnt=$(cat $server | jq 'keys | length - 1');
+        for i in $(seq 0 $keys_cnt); do
             root_key=$(cat $server | jq "keys[${i}]");
             structure=$(jq ".${root_key}" $server);
 
@@ -41,13 +41,13 @@ function renderConfig(){
 }
 
 function main(){
-    cd $work_dir;
+    # cd $work_dir;
 
     final_conf=$(renderConfig);
-    echo $final_conf > config.json;
+    # echo $final_conf > config.json;
 
     printf "Final config: \n${final_conf}\n";
-    exec uv run mcp_bridge/main.py;
+    # exec uv run mcp_bridge/main.py;
 }
 
 main "$@";
