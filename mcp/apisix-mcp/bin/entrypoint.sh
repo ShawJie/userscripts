@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex;
+set -e;
 
 function launchEtcd(){
     nohup etcd > /tmp/etcd.log 2>&1 &
@@ -11,7 +11,7 @@ function launchApisix(){
     
     baseconfig_exists="false";
     list_confs=$(find "${apisix_path}/conf" -name "*.yaml");
-    if [ -n "$list_confs"]; then
+    if [ -n "$list_confs" ]; then
         printf "Folling config file will be apply: \n";
         for conf in $list_confs; do
             printf "  - $conf\n";
@@ -30,19 +30,20 @@ function launchApisix(){
 }
 
 function initialAdminKey(){
-    writeKey=$(echo $RANDOM | md5sum | head -c 16);
-    viewKey=$(echo $RANDOM | md5sum | head -c 16);
+    if [ -z "$CUSTOM_API_WRITE_KEY" ]; then
+        writeKey=$(echo $RANDOM | md5sum | head -c 16);
+        export CUSTOM_API_WRITE_KEY=$writeKey;
+    fi
 
-    export CUSTOM_API_WRITE_KEY=$writeKey;
-    export CUSTOM_API_VIEW_KEY=$viewKey;
-
+    if [ -z "$CUSTOM_API_VIEW_KEY" ]; then
+        viewKey=$(echo $RANDOM | md5sum | head -c 16);
+        export CUSTOM_API_VIEW_KEY=$viewKey;
+    fi
     printf "CustomWriteKey: $writeKey\nCustomViewKey: $viewKey\n";
 }
 
 function launchDashboard(){
-    cd /data/apisix-dashboard;
-
-    chmod +x ./manager-api;
+    cd /usr/local/apisix-dashboard;
     exec ./manager-api;
 }
 
@@ -60,12 +61,8 @@ function main(){
 
     initialAdminKey
     if [ "$mode" == "standalone" ]; then
-
         launchApisix;
-
-        ln -sf /dev/stdout /usr/local/apisix/logs/access.log && \
-        ln -sf /dev/stderr /usr/local/apisix/logs/error.log;
-        while true; do sleep 600; done;
+        while sleep 600; do :; done
     else
         launchEtcd;
         launchDashboard;

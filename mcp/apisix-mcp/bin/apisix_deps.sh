@@ -27,7 +27,7 @@ function installEtcd(){
     wget https://github.com/etcd-io/etcd/releases/download/${specify_etcd_version}/etcd-${specify_etcd_version}-linux-${system_info}.tar.gz;
     tar -xvf etcd-${specify_etcd_version}-linux-${system_info}.tar.gz && \
       cd etcd-${specify_etcd_version}-linux-${system_info} && \
-      sudo cp -a etcd etcdctl /usr/bin/
+      sudo cp -a etcd etcdctl /usr/bin/;
 }
 
 function installApisix(){
@@ -48,11 +48,18 @@ function installApisix(){
     sudo apt install -y apisix=${except_version}; 
 }
 
+function fetchLatestPlugins(){
+    git clone https://github.com/apache/apisix.git apisix-master;
+    cp -raf apisix-master/apisix/plugins/* /usr/local/apisix/apisix/plugins/;
+}
+
 function main() {
     installEnvironmentDependency
 
     # install apisix first
     installApisix ${1};
+
+    fetchLatestPlugins;
 
     # then install etcd
     installEtcd;

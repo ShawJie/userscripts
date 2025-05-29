@@ -5,7 +5,9 @@ services:
       - 9000:9000
       - 9080:9080
     volumes:
+      #- ./apisix_conf/config.standalone.yaml:/usr/local/apisix/conf/config.yaml
       - ./apisix_conf/config.template.yaml:/usr/local/apisix/conf/config.yaml
-      - ./dashboard_conf/conf.yaml:/data/apisix-dashboard/conf/conf.yaml
-    command: -m standalone
+      - ./apisix_conf/apisix.yaml:/usr/local/apisix/conf/apisix.yaml
+      - ./dashboard_conf/conf.yaml:/usr/local/apisix-dashboard/conf/conf.yaml
+    #command: -m standalone
     restart: unless-stopped

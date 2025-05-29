@@ -1,0 +1,9 @@
+routes:
+  -
+    uri: /ip
+    upstream:
+      nodes:
+        "httpbin.org:80": 1
+      type: roundrobin
+      pass_host: node
+#END
