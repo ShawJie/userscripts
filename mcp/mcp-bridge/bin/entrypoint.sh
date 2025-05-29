@@ -11,7 +11,7 @@ function fetchServers(){
     mcp_servers=$(echo '{}' | jq '.mcp_servers = {}');
     for server in $fileNames; do
         keys_cnt=$(cat $server | jq 'keys | length');
-        for ((i=0;i<$keys_cnt;i++)); do
+        for i in $(seq $keys_cnt); do
             root_key=$(cat $server | jq "keys[${i}]");
             structure=$(jq ".${root_key}" $server);
 
